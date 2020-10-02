@@ -13,6 +13,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Scanner;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -30,17 +31,31 @@ public class NoteServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-     
+           
+         String path = getServletContext().getRealPath("/WEB-INF/note.txt");
+            File text = new File(path);
+            Scanner read = new Scanner(text);
+            while(read.hasNext())   {
+            String title = read.nextLine();
+            String contents = read.nextLine();         
         
-        String path = getServletContext().getRealPath("/WEB-INF/note.txt");
-        BufferedReader br = new BufferedReader(new FileReader(new File(path)));
-        br.readLine();
+           Note note = new Note(title, contents);
+           request.setAttribute("note", note);
+            }
         
+            
         if (request.getParameter("edit") != null)  {
+            while(read.hasNext())   {
+            String title = read.nextLine();
+            String contents = read.nextLine();         
+           Note note = new Note(title, contents);
+           request.setAttribute("note", note);
+            }            
             getServletContext().getRequestDispatcher("/WEB-INF/editnote.jsp")
                 .forward(request, response);
             return;
         }
+           
            getServletContext().getRequestDispatcher("/WEB-INF/viewnote.jsp")
                 .forward(request, response);
     }
@@ -53,10 +68,6 @@ public class NoteServlet extends HttpServlet {
         
         String title = request.getParameter("title");
         String contents = request.getParameter("contents");
-    
-           request.setAttribute("title", title);
-           request.setAttribute("contents", contents);
-           
        
        Note note = new Note(title, contents);
        request.setAttribute("note", note);
@@ -64,11 +75,13 @@ public class NoteServlet extends HttpServlet {
        String path = getServletContext().getRealPath("/WEB-INF/note.txt");
        PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(path, false))); 
        
-       pw.write(note.getTitle() + "\n" + note.getContents());
-       
+       pw.println(title);
+       pw.println(contents);
+
+       pw.flush();
        getServletContext().getRequestDispatcher("/WEB-INF/viewnote.jsp")
                 .forward(request, response);
        
-        return;
+            return;
     }
 }
