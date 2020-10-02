@@ -17,6 +17,6 @@
         <h4>Title: ${note.title}</h4>
         <h4>Contents: ${note.contents}</h4>
         
-        <a href="note?edit" name="edit">Edit.</a>
+        <a href="note?edit">Edit.</a>
     </body>
 </html>
